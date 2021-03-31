@@ -1,13 +1,21 @@
 // require the discord.js module
 const Discord = require('discord.js');
 const prefix = "+"
-const { token, mongoURL } = require("config.json")
 // create a new Discord client
 
 const client = new Discord.Client({partials: ["MESSAGE", "CHANNEL", "REACTION"]});
 const Levels = require('discord-xp')
 const fs = require("fs")
-try {Levels.setURL(mongoURL)}
+require('dotenv-flow').config();
+
+const config = {
+    token: process.env.TOKEN,
+    owner: process.env.MONGOURL
+};
+
+
+
+try {Levels.setURL(config.MONGOURL)}
 
 catch {console.log("erreur")}
 client.commands = new Discord.Collection();
@@ -72,4 +80,4 @@ client.on('message', async message => {
     }
 });
 // login to Discord with your app's token
-client.login(token);
+client.login(config.TOKEN);
