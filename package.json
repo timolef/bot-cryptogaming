@@ -1,11 +1,12 @@
 {
+  "script": {
+    "start": "node bot.js"
+  },
   "dependencies": {
     "discord-xp": "^1.1.10",
     "discord.js": "^12.5.1",
     "fs": "^0.0.1-security",
     "ls": "^0.2.1"
-  },
-  "script": {
-    "start": "node bot.js"
   }
+  
 }
