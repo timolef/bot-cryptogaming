@@ -6,16 +6,12 @@ const prefix = "+"
 const client = new Discord.Client({partials: ["MESSAGE", "CHANNEL", "REACTION"]});
 const Levels = require('discord-xp')
 const fs = require("fs")
-require('dotenv-flow').config();
-
-const config = {
-    token: process.env.TOKEN,
-    owner: process.env.MONGOURL
-};
+require('dotenv').config();
 
 
 
-try {Levels.setURL(config.MONGOURL)}
+
+try {Levels.setURL(process.env.MONGOURL)}
 
 catch {console.log("erreur")}
 client.commands = new Discord.Collection();
@@ -80,4 +76,4 @@ client.on('message', async message => {
     }
 });
 // login to Discord with your app's token
-client.login(config.TOKEN);
+client.login(process.env.TOKEN);
