@@ -1,6 +1,6 @@
 {
   "scripts": {
-    "start": "node bot.js"
+    "start": "node ./bot.js"
   },
   "dependencies": {
     "discord-xp": "^1.1.10",
