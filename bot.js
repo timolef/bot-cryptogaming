@@ -1,12 +1,9 @@
 // require the discord.js module
 const Discord = require('discord.js');
 const prefix = "+"
-const { token, mongoURL } = require("./config.json")
+const { token, mongoURL } = require("config.json")
 // create a new Discord client
-const config = {
-    token: process.env.TOKEN,
-    mongoURL: process.env.MONGOURL
-};
+
 const client = new Discord.Client({partials: ["MESSAGE", "CHANNEL", "REACTION"]});
 const Levels = require('discord-xp')
 const fs = require("fs")
