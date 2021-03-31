@@ -6,8 +6,7 @@ const prefix = "+"
 const client = new Discord.Client({partials: ["MESSAGE", "CHANNEL", "REACTION"]});
 const Levels = require('discord-xp')
 const fs = require("fs")
-require('dotenv').config();
-
+require("dotenv").config();
 
 
 

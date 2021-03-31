@@ -3,6 +3,7 @@
     "start": "node ./bot.js"
   },
   "dependencies": {
+    "aws-sdk": "^2.877.0",
     "discord-xp": "^1.1.10",
     "discord.js": "^12.5.1",
     "dotenv": "^8.2.0",
