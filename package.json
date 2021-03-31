@@ -6,6 +6,6 @@
     "ls": "^0.2.1"
   },
   "script": {
-    "start": "node ./bot.js"
+    "start": "node bot.js"
   }
 }
