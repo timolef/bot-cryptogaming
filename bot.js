@@ -27,6 +27,11 @@ client.once('ready', () => {
 	console.log('Ready!');
 });
 client.on('message', async message => {
+    const args = message.content.slice(prefix.length).split(/ +/);
+    const command = args.shift().toLowerCase();
+
+    const randomXp = Math.floor(Math.random() * 9) + 1; //Random amont of XP until the number you want + 1
+    const hasLeveledUp = await Levels.appendXp(message.author.id, message.guild.id, randomXp);
     if (!message.guild) return;
     if (message.author.bot) return;
 
@@ -34,11 +39,7 @@ client.on('message', async message => {
 
     if(!message.content.startsWith(prefix) || message.author.bot) return;
 
-    const args = message.content.slice(prefix.length).split(/ +/);
-    const command = args.shift().toLowerCase();
-
-    const randomXp = Math.floor(Math.random() * 9) + 1; //Random amont of XP until the number you want + 1
-    const hasLeveledUp = await Levels.appendXp(message.author.id, message.guild.id, randomXp);
+    
 
     if (hasLeveledUp) {
         const user = await Levels.fetch(message.author.id, message.guild.id);
