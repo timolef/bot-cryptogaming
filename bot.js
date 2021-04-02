@@ -26,6 +26,13 @@ for (const file of commandFiles){
 client.once('ready', () => {
 	console.log('Ready!');
 });
+client.on('guildMemberAdd', member => {
+    embedWelcome = new Discord.MessageEmbed()
+    .setTitle("BIENVENUE !")
+    .setDescription(`Souhaitez la bienvenue à ${member}! Il vient tout juste d'arriver.`)
+    .setThumbnail(member.displayAvatarURL())
+    member.guild.channels.get('826219341728972822').send(embedWelcome); 
+});
 client.on('message', async message => {
     if (!message.guild) return;
     if (message.author.bot) return;
