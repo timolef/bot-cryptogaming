@@ -74,6 +74,9 @@ client.on('message', async message => {
         .setColor("#0099ff")
         .setDescription(`${lb.join("\n\n")}`)
         message.channel.send(embedLeader)
+    }else if(command ==="battle"){
+        client.commands.get('battle').execute(message, args, Discord, client)
+
     }
 });
 // login to Discord with your app's token
