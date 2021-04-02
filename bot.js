@@ -61,30 +61,11 @@ client.on('message', async message => {
     }else if (command === "ticket"){
         client.commands.get('ticket').execute(message, args)
     }else if(command === "rank") {
-        const user = await Levels.fetch(message.author.id, message.guild.id);
-        embedRank = new Discord.MessageEmbed()
-        .setTitle("LEADERBOARD")
-        .setColor("#e42643")
-        .setDescription(`You are currently level **${user.level}**!`)
-        message.channel.send(embedRank)
-    }
-    
-    //Leaderboard
-    else if(command === "leaderboard" || command === "lb") {
-        const rawLeaderboard = await Levels.fetchLeaderboard(message.guild.id, 5);
-        if (rawLeaderboard.length < 1) return reply("Nobody's in leaderboard yet.");
-
-        const leaderboard = await Levels.computeLeaderboard(client, rawLeaderboard); 
-
-        const lb = leaderboard.map(e => `${e.position}. ${e.username}#${e.discriminator}\nLevel: ${e.level}\nXP: ${e.xp.toLocaleString()}`);
-        embedLeader = new Discord.MessageEmbed()
-        .setTitle("LEADERBOARD")
-        .setColor("#0099ff")
-        .setDescription(`${lb.join("\n\n")}`)
-        message.channel.send(embedLeader)
+        client.commands.get('rank').execute(message, Discord)
+    }else if(command === "leaderboard" || command === "lb") {
+        client.commands.get('leaderboard').execute(message, Discord, client)
     }else if(command ==="battle"){
         client.commands.get('battle').execute(message, args, Discord, client)
-
     }
 });
 // login to Discord with your app's token
