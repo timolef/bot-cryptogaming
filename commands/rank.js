@@ -1,7 +1,7 @@
 module.exports = {
     name: 'rank',
     description: 'Voir son rank',
-    async execute(message, Discord){
+    async execute(message, Discord, Levels){
         const user = await Levels.fetch(message.author.id, message.guild.id);
         embedRank = new Discord.MessageEmbed()
         .setTitle("RANK")

@@ -1,7 +1,7 @@
 module.exports = {
     name: 'leaderboard',
     description: 'Voir le leaderboard',
-    async execute(message, Discord, client){
+    async execute(message, Discord, client, Levels){
         const rawLeaderboard = await Levels.fetchLeaderboard(message.guild.id, 5);
         if (rawLeaderboard.length < 1) return reply("Nobody's in leaderboard yet.");
 

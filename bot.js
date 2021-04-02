@@ -61,9 +61,9 @@ client.on('message', async message => {
     }else if (command === "ticket"){
         client.commands.get('ticket').execute(message, args)
     }else if(command === "rank") {
-        client.commands.get('rank').execute(message, Discord)
+        client.commands.get('rank').execute(message, Discord, Levels)
     }else if(command === "leaderboard" || command === "lb") {
-        client.commands.get('leaderboard').execute(message, Discord, client)
+        client.commands.get('leaderboard').execute(message, Discord, client, Levels)
     }else if(command ==="battle"){
         client.commands.get('battle').execute(message, args, Discord, client)
     }
