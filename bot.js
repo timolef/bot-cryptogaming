@@ -23,15 +23,16 @@ for (const file of commandFiles){
 
 // when the client is ready, run this code
 // this event will only trigger one time after logging in
+
 client.once('ready', () => {
 	console.log('Ready!');
 });
-client.on('guildMemberAdd', member => {
-    embedWelcome = new Discord.MessageEmbed()
-    .setTitle("BIENVENUE !")
-    .setDescription(`Souhaitez la bienvenue à ${member}! Il vient tout juste d'arriver.`)
-    .setThumbnail(member.displayAvatarURL())
-    member.guild.channels.get('826219341728972822').send(embedWelcome); 
+client.on('guildMemberAdd', async member => {
+
+    let msgEmbed = new Discord.MessageEmbed()
+    .setTitle(`Bienvenue !`)
+    .setDescription(`La grande porte s'ouvre et ${member} fait son entrée dans le tunnel ! Attention !`)
+    member.guild.channels.cache.get('826219341728972822').send(msgEmbed); 
 });
 client.on('message', async message => {
     if (!message.guild) return;
