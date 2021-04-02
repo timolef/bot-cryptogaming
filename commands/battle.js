@@ -12,12 +12,12 @@ module.exports = {
         .setTitle("BATTLE ! ")
         if(randomBattle == 2){
             embedBattle.setDescription(`GG ${taggedUser} Tu as win !`)
-            .setThumbnail(taggedUser.displayAvatarURL())
-            message.channel.send(embedBattle)
+            .setThumbnail(taggedUser.displayAvatarURL());
+            message.channel.send(embedBattle);
         }else if(randomBattle == 1){
             embedBattle.setDescription(`GG ${message.author.toString()} Tu as win !`)
-            .setThumbnail(message.author.displayAvatarURL())
-            message.channel.send(embedBattle)
+            .setThumbnail(message.author.displayAvatarURL());
+            message.channel.send(embedBattle);
         }
     }
  

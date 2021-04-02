@@ -32,6 +32,7 @@ client.on('guildMemberAdd', async member => {
     let msgEmbed = new Discord.MessageEmbed()
     .setTitle(`Bienvenue !`)
     .setDescription(`La grande porte s'ouvre et ${member} fait son entrée dans le tunnel ! Attention !`)
+    .setImage('https://i.pinimg.com/originals/cc/85/0f/cc850f28dde19d8559cd08ca4709e16d.png')
     member.guild.channels.cache.get('826219341728972822').send(msgEmbed); 
 });
 client.on('message', async message => {
