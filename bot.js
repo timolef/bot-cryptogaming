@@ -95,6 +95,8 @@ client.on('message', async message => {
         client.commands.get('reactionrole').execute(message, args, Discord, client)
     }else if (command === "ticket"){
         client.commands.get('ticket').execute(message, args)
+    }else if (command === "clear"){
+        client.commands.get('clear').execute(message, args)
     }else if(command === "rank") {
         client.commands.get('rank').execute(message, Discord, Levels)
     }else if(command === "leaderboard" || command === "lb") {
