@@ -1,22 +1,11 @@
-
+const axios = require('axios')
 const Discord = require('discord.js');
 const prefix = "+"
-// create a new Discord client
-const ytdl = require('ytdl-core');
-const ytSearch = require('yt-search');
-
-//Global queue for your bot. Every server will have a key and value pair in this map. { guild.id, queue_constructor{} }
-const queue = new Map();
 const client = new Discord.Client({partials: ["MESSAGE", "CHANNEL", "REACTION"]});
-const Levels = require('discord-xp')
 const fs = require("fs")
+const rss = require('rss-converter');
+const config = require('./config.json');
 require("dotenv").config();
-
-
-
-try {Levels.setURL(process.env.MONGOURL)}
-
-catch {console.log("erreur")}
 client.commands = new Discord.Collection();
 
 const commandFiles = fs.readdirSync('./commands/').filter(file => file.endsWith('.js'));
@@ -30,93 +19,81 @@ for (const file of commandFiles){
 
 client.once('ready', () => {
 	console.log('Ready!');
+    setInterval(async () => {
+        let feed = await rss.toJson('https://www.youtube.com/feeds/videos.xml?channel_id=' + config.channel_yt);
+        let jsonOpen = fs.readFileSync('links.json');
+        let json = JSON.parse(jsonOpen);
+        if (jsonOpen.includes(feed.items[0].yt_videoId)) return;
+        json.push(feed.items[0].yt_videoId);
+        let jsonLink = JSON.stringify(json);
+        fs.writeFileSync('links.json', jsonLink);
+        const embed = new Discord.MessageEmbed()
+        .setColor("#ff4fa7")
+        .setAuthor("Youtube Notification")
+        .addField("**Title**", feed.items[0].media_group.media_title)
+        .addField("**Likes Count**", feed.items[0].media_group.media_community.media_starRating_count, true)
+        .addField("**Likes Average**", feed.items[0].media_group.media_community.media_starRating_average, true)
+        .addField("**Views**", feed.items[0].media_group.media_community.media_statistics_views, true)
+        .addField("**Description**", feed.items[0].media_group.media_description)
+        .setImage(feed.items[0].media_group.media_thumbnail_url)
+        client.channels.cache.get(config.channel_id).send(`@everyone **${feed.author.name}** vient de sortir une nouvelle vidéo ! **${feed.items[0].title}**!\n\nhttps://www.youtube.com/watch?v=${feed.items[0].yt_videoId}`, embed)
+        }, 5000);
 });
-client.on('guildMemberAdd', async member => {
-
+client.on('voiceStateUpdate', (oldState, newState) => {
+    if (newState.channelID === null) console.log(oldState.member.user.username, ' left channel ', oldState.channel.name);
+    
+    else if (oldState.channelID === null & newState.channelID == "840348418127953941"){
+        newState.guild.channels.create(newState.member.user.username,{
+            type:'voice'
+                
+        })
+        .then(channel => {
+            channel.overwritePermissions([
+                {
+                    id: newState.member.user.tag,
+                    allow: ['MANAGE_CHANNELS']
+                },]);
+            let category = newState.guild.channels.cache.find(c => c.name == "Test" && c.type == "category");
+    
+            if (!category) throw new Error("Category channel does not exist");
+            channel.setParent(category.id);
+        })
+    }
+    else if (oldState.channelID === null ) console.log(newState.member.user.username, ' joined channel ', newState.channel.name);
+    else console.log(newState.member.user.username, 'moved channels', oldState.channel.name,'//', newState.channel.name);
+    
+});
+client.on('guildMemberAdd',member => {
     let msgEmbed = new Discord.MessageEmbed()
     .setTitle(`Bienvenue !`)
-    .setDescription(`La grande porte s'ouvre et ${member} fait son entrée dans le tunnel ! Attention !`)
-    .setImage('https://i.pinimg.com/originals/cc/85/0f/cc850f28dde19d8559cd08ca4709e16d.png')
-    member.guild.channels.cache.get('826219341728972822').send(msgEmbed); 
+    .setDescription(`Bienvenue ${member.user.username} ! Nous sommes ravis de te compter parmis nous ! \nN'hésite pas à passer dans #:video_game:¦-rôles-jeux pour suivre l'actualité des jeux qui t'intéresse !`)
+    .setThumbnail(member.user.avatarURL())
+    member.guild.channels.cache.get('824762724390141963').send(msgEmbed); 
 });
 client.on('message', async message => {
     if (!message.guild) return;
     if (message.author.bot) return;
     const args = message.content.slice(prefix.length).split(/ +/);
     const command = args.shift().toLowerCase();
-    const server_queue = queue.get(message.guild.id);
-    const randomXp = Math.floor(Math.random() * 9) + 1; //Random amont of XP until the number you want + 1
-    const hasLeveledUp = await Levels.appendXp(message.author.id, message.guild.id, randomXp);
-    const video_player = async (guild, song) => {
-        const song_queue = queue.get(guild.id);
     
-        //If no song is left in the server queue. Leave the voice channel and delete the key and value pair from the global queue.
-        if (!song) {
-            song_queue.voice_channel.leave();
-            queue.delete(guild.id);
-            return;
-        }
-        const stream = ytdl(song.url, { filter: 'audioonly' });
-        song_queue.connection.play(stream, { seek: 0, volume: 0.5 })
-        .on('finish', () => {
-            song_queue.songs.shift();
-            video_player(guild, song_queue.songs[0]);
-        });
-        await song_queue.text_channel.send(`🎶 Now playing **${song.title}**`)
-    }
-    
-    const skip_song = (message, server_queue) => {
-        if (!message.member.voice.channel) return message.channel.send('You need to be in a channel to execute this command!');
-        if(!server_queue){
-            return message.channel.send(`There are no songs in queue 😔`);
-        }
-        server_queue.connection.dispatcher.end();
-    }
-    
-    const stop_song = (message, server_queue) => {
-        if (!message.member.voice.channel) return message.channel.send('You need to be in a channel to execute this command!');
-        server_queue.songs = [];
-        server_queue.connection.dispatcher.end();
-    }
-
 
 
     if(!message.content.startsWith(prefix) || message.author.bot) return;
 
     
 
-    if (hasLeveledUp) {
-        const user = await Levels.fetch(message.author.id, message.guild.id);
-        message.channel.send(`You leveled up to ${user.level}! Keep it going!`);
-    }
-    if(command === 'test'){
-        message.channel.send("test")
-    }else if (command === "reactionrole"){
-        client.commands.get('reactionrole').execute(message, args, Discord, client)
-    }else if (command === "ticket"){
-        client.commands.get('ticket').execute(message, args)
-    }else if (command === "clear"){
-        client.commands.get('clear').execute(message, args)
-    }else if(command === "rank") {
-        client.commands.get('rank').execute(message, Discord, Levels)
-    }else if(command === "leaderboard" || command === "lb") {
-        client.commands.get('leaderboard').execute(message, Discord, client, Levels)
-    }else if(command ==="battle"){
-        client.commands.get('battle').execute(message, args, Discord, client)
-    }else if(command === "play"){
-        client.commands.get('play').execute(message,args, Discord, client, ytdl, ytSearch, queue, video_player)
-    }else if(command === "pause"){
-        
-        
-        skip_song(message, server_queue);
-    }else if(command === "stop"){
-        
-        try {stop_song(message, server_queue)}
-        catch(error){
-            message.channel.send("Il n'y a rien a stopper")
-        }
-        
+    if (command === "message"){
+        client.commands.get('message').execute(message, args, Discord, client)
+    }else if (command === "help"){
+        client.commands.get('help').execute(message, args, Discord, client)
+    }else if (command === "link"){
+        client.commands.get('link').execute(message, args, Discord, client)
+    }else if (command === "last"){
+        client.commands.get('last').execute(message, args, Discord, client)
     }
 });
 // login to Discord with your app's token
-client.login(process.env.TOKEN);
+function handleUploads() {
+    
+}
+client.login(process.env.TOKEN); 
