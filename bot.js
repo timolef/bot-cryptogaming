@@ -4,7 +4,6 @@ const prefix = "+"
 const client = new Discord.Client({partials: ["MESSAGE", "CHANNEL", "REACTION"]});
 const fs = require("fs")
 const rss = require('rss-converter');
-const config = require('./config.json');
 require("dotenv").config();
 client.commands = new Discord.Collection();
 
@@ -20,7 +19,7 @@ for (const file of commandFiles){
 client.once('ready', () => {
 	console.log('Ready!');
     setInterval(async () => {
-        let feed = await rss.toJson('https://www.youtube.com/feeds/videos.xml?channel_id=' + config.channel_yt);
+        let feed = await rss.toJson('https://www.youtube.com/feeds/videos.xml?channel_id=' + process.env.channel_yt);
         let jsonOpen = fs.readFileSync('links.json');
         let json = JSON.parse(jsonOpen);
         if (jsonOpen.includes(feed.items[0].yt_videoId)) return;
@@ -36,7 +35,7 @@ client.once('ready', () => {
         .addField("**Views**", feed.items[0].media_group.media_community.media_statistics_views, true)
         .addField("**Description**", feed.items[0].media_group.media_description)
         .setImage(feed.items[0].media_group.media_thumbnail_url)
-        client.channels.cache.get(config.channel_id).send(`@everyone **${feed.author.name}** vient de sortir une nouvelle vidéo ! **${feed.items[0].title}**!\n\nhttps://www.youtube.com/watch?v=${feed.items[0].yt_videoId}`, embed)
+        client.channels.cache.get(process.env.channel_id).send(`@everyone **${feed.author.name}** vient de sortir une nouvelle vidéo ! **${feed.items[0].title}**!\n\nhttps://www.youtube.com/watch?v=${feed.items[0].yt_videoId}`, embed)
         }, 5000);
 });
 client.on('voiceStateUpdate', (oldState, newState) => {

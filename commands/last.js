@@ -3,10 +3,9 @@ module.exports = {
 	description: 'Permet de voir la derniere vidéo mise en ligne de Cryptogaming FR',
 	usage: '+last',
 	async execute(message, args, Discord, client) {
-		
+		require("dotenv").config();
 		const rss = require('rss-converter');
-		const config = require('../config.json');
-			let feed = await rss.toJson('https://www.youtube.com/feeds/videos.xml?channel_id=' + config.channel_yt);
+			let feed = await rss.toJson('https://www.youtube.com/feeds/videos.xml?channel_id=' + process.env.channel_yt);
 			const embed = new Discord.MessageEmbed()
 			.setColor("#ff4fa7")
 			.setAuthor("Youtube Notification")
